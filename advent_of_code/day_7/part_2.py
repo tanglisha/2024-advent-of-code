@@ -3,23 +3,26 @@ from pathlib import Path
 def is_valid(answer: int, items: list[int]):
     total = items.pop(0)
 
-    while len(items) > 0:
-        if answer < total:
-            return False
-        
-        next_item = items.pop(0)
-        mult = total * next_item
-        add = total + next_item
-
-        if answer == mult and len(items) == 0:
-            return True
-        elif answer == add and len(items) == 0:
-            return True
-        
-        if is_valid(answer, [mult, *items]):
-            return True
-        elif is_valid(answer, [add, *items]):
-            return True
+    if len(items) == 0:
+        # no more items to check, if they're equal it's valid
+        return answer == total
+    
+    if answer < total:
+        # invalid, the total is too big
+        return False
+    
+    next_item = items.pop(0)
+    mult = total * next_item
+    add = total + next_item
+    concat_next = int(f"{total}{next_item}")
+    
+    if is_valid(answer, [mult, *items]):
+        return True
+    elif is_valid(answer, [add, *items]):
+        return True
+    
+    elif is_valid(answer, [concat_next, *items]):
+        return True
         
     return False
 
@@ -51,3 +54,8 @@ if "__main__" == __name__:
             results.append(item["answer"])
     result = sum(results)
     print(result)
+
+    # 5879173805938 is too low
+    # 492384118366477 is too high
+    # 492383931650959
+    # 492322653155336 is too low
